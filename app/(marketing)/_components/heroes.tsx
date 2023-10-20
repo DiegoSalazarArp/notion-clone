@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Heroes() {
+export const Heroes = () => {
   return (
     <div className="flex flex-col items-center justify-center max-w-5xl">
       <div className="flex items-center">
@@ -13,6 +13,7 @@ export default function Heroes() {
           <Image
             src="/documents.png"
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain dark:hidden"
             alt="Documents"
           />
@@ -20,6 +21,7 @@ export default function Heroes() {
           <Image
             src="/documents-dark.png"
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain hidden dark:block"
             alt="Documents"
           />
@@ -28,12 +30,14 @@ export default function Heroes() {
           <Image
             src="/reading.png"
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain dark:hidden"
             alt="Reading"
           />
           <Image
             src="/reading-dark.png"
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-contain hidden dark:block"
             alt="Reading"
           />
@@ -41,4 +45,4 @@ export default function Heroes() {
       </div>
     </div>
   );
-}
+};
