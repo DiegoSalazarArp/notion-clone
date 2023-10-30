@@ -23,17 +23,20 @@ const DocumentsPage = () => {
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
       <Image
-        src={"/empty.png"}
+        src="/empty.png"
         height="300"
         width="300"
+        style={{ width: "auto" }}
         alt="empty"
+        priority
         className="dark:hidden"
       />
 
       <Image
-        src={"/empty-dark.png"}
+        src="/empty-dark.png"
         height="300"
         width="300"
+        style={{ width: "auto" }}
         alt="empty-dark"
         className="hidden dark:block"
       />

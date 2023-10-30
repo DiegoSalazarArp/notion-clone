@@ -23,8 +23,10 @@ import { Popover } from "@/components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { TrashBox } from "./trash-box";
 import { useSearch } from "@/hooks/use-search";
+import { useSettings } from "@/hooks/use-settings";
 
 export const Navigation = () => {
+  const settings = useSettings();
   const search = useSearch();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -145,7 +147,7 @@ export const Navigation = () => {
           <UserItem />
 
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
-          <Item label="Settings" icon={Settings} onClick={() => {}} />
+          <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
 
           <Item onClick={handleCreate} label="New Page" icon={PlusCircle} />
         </div>
@@ -158,7 +160,7 @@ export const Navigation = () => {
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
             <PopoverContent
-              className="p-0 w-72 rounded-md border dark:border-white shadow-md"
+              className="p-0 w-72 rounded-md border  shadow-md"
               side={isMobile ? "bottom" : "right"}
             >
               <TrashBox />
