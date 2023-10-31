@@ -162,7 +162,7 @@ export const Navigation = () => {
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
             <PopoverContent
-              className="p-0 w-72 rounded-md border  shadow-md"
+              className="p-0 w-72 rounded-md border bg-white dark:bg-black shadow-md"
               side={isMobile ? "bottom" : "right"}
             >
               <TrashBox />
