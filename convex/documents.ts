@@ -1,26 +1,27 @@
 import { v } from "convex/values";
+
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 
 export const archive = mutation({
-  args: {
-    id: v.id("documents"),
-  },
+  args: { id: v.id("documents") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
+
     const userId = identity.subject;
 
     const existingDocument = await ctx.db.get(args.id);
 
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
 
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const recursiveArchive = async (documentId: Id<"documents">) => {
@@ -45,6 +46,7 @@ export const archive = mutation({
     });
 
     recursiveArchive(args.id);
+
     return document;
   },
 });
@@ -55,8 +57,9 @@ export const getSidebar = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -83,7 +86,7 @@ export const create = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -95,6 +98,7 @@ export const create = mutation({
       isArchived: false,
       isPublished: false,
     });
+
     return document;
   },
 });
@@ -126,18 +130,19 @@ export const restore = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
+
     const existingDocument = await ctx.db.get(args.id);
 
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
 
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const recursiveRestore = async (documentId: Id<"documents">) => {
@@ -157,18 +162,19 @@ export const restore = mutation({
       }
     };
 
-    const option: Partial<Doc<"documents">> = {
+    const options: Partial<Doc<"documents">> = {
       isArchived: false,
     };
 
     if (existingDocument.parentDocument) {
       const parent = await ctx.db.get(existingDocument.parentDocument);
       if (parent?.isArchived) {
-        option.parentDocument = undefined;
+        options.parentDocument = undefined;
       }
     }
 
-    const document = await ctx.db.patch(args.id, option);
+    const document = await ctx.db.patch(args.id, options);
+
     recursiveRestore(args.id);
 
     return document;
@@ -181,7 +187,7 @@ export const remove = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -189,11 +195,11 @@ export const remove = mutation({
     const existingDocument = await ctx.db.get(args.id);
 
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
 
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const document = await ctx.db.delete(args.id);
@@ -207,7 +213,7 @@ export const getSearch = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -230,19 +236,22 @@ export const getById = query({
 
     const document = await ctx.db.get(args.documentId);
 
-    if (!document) throw new Error("Not found");
+    if (!document) {
+      throw new Error("Not found");
+    }
 
-    if (!document.isPublished && !document.isArchived) {
+    if (document.isPublished && !document.isArchived) {
       return document;
     }
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
+
     if (document.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     return document;
@@ -262,7 +271,7 @@ export const update = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Unauthenticated");
     }
 
     const userId = identity.subject;
@@ -272,11 +281,11 @@ export const update = mutation({
     const existingDocument = await ctx.db.get(args.id);
 
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
 
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const document = await ctx.db.patch(args.id, {
@@ -293,17 +302,19 @@ export const removeIcon = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Unauthenticated");
     }
 
     const userId = identity.subject;
 
     const existingDocument = await ctx.db.get(args.id);
+
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
+
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const document = await ctx.db.patch(args.id, {
@@ -320,17 +331,19 @@ export const removeCoverImage = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not logged in");
+      throw new Error("Unauthenticated");
     }
 
     const userId = identity.subject;
 
     const existingDocument = await ctx.db.get(args.id);
+
     if (!existingDocument) {
-      throw new Error("Document not found");
+      throw new Error("Not found");
     }
+
     if (existingDocument.userId !== userId) {
-      throw new Error("Not authorized");
+      throw new Error("Unauthorized");
     }
 
     const document = await ctx.db.patch(args.id, {
